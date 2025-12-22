@@ -1,15 +1,27 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 export default function Navbar() {
-  const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const [open, setOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
-  const isActive = (path: string) =>
-    pathname === path ? "#4f46e5" : "#334155";
+  // ✅ Detect screen width safely
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  const linkStyle = (path: string) => ({
+    fontWeight: 700,
+    textDecoration: "none",
+    color: pathname === path ? "#4f46e5" : "#334155",
+  });
 
   return (
     <nav
@@ -43,57 +55,49 @@ export default function Navbar() {
         </Link>
 
         {/* DESKTOP MENU */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "28px",
-          }}
-          className="desktop-menu"
-        >
-          <Link href="/tools" style={{ color: isActive("/tools"), fontWeight: 700 }}>
-            Tools
-          </Link>
-          <Link
-            href="/pricing"
-            style={{ color: isActive("/pricing"), fontWeight: 700 }}
-          >
-            Pricing
-          </Link>
-          <Link
-            href="/login"
-            style={{
-              padding: "10px 18px",
-              background: "#4f46e5",
-              color: "#ffffff",
-              borderRadius: "8px",
-              fontWeight: 700,
-              fontSize: "13px",
-              textDecoration: "none",
-            }}
-          >
-            Get Started
-          </Link>
-        </div>
+        {!isMobile && (
+          <div style={{ display: "flex", gap: "28px", alignItems: "center" }}>
+            <Link href="/tools" style={linkStyle("/tools")}>
+              Tools
+            </Link>
+            <Link href="/pricing" style={linkStyle("/pricing")}>
+              Pricing
+            </Link>
+            <Link
+              href="/login"
+              style={{
+                padding: "10px 18px",
+                background: "#4f46e5",
+                color: "#ffffff",
+                borderRadius: "8px",
+                fontWeight: 700,
+                fontSize: "13px",
+                textDecoration: "none",
+              }}
+            >
+              Get Started
+            </Link>
+          </div>
+        )}
 
         {/* HAMBURGER */}
-        <button
-          onClick={() => setOpen(!open)}
-          style={{
-            background: "none",
-            border: "none",
-            fontSize: "22px",
-            cursor: "pointer",
-            display: "none",
-          }}
-          className="hamburger"
-        >
-          ☰
-        </button>
+        {isMobile && (
+          <button
+            onClick={() => setOpen(!open)}
+            style={{
+              background: "none",
+              border: "none",
+              fontSize: "24px",
+              cursor: "pointer",
+            }}
+          >
+            ☰
+          </button>
+        )}
       </div>
 
       {/* MOBILE MENU */}
-      {open && (
+      {isMobile && open && (
         <div
           style={{
             borderTop: "1px solid #e5e7eb",
@@ -102,7 +106,6 @@ export default function Navbar() {
             flexDirection: "column",
             gap: "16px",
           }}
-          className="mobile-menu"
         >
           <Link href="/tools" onClick={() => setOpen(false)}>
             Tools
@@ -127,18 +130,6 @@ export default function Navbar() {
           </Link>
         </div>
       )}
-
-      {/* RESPONSIVE CSS */}
-      <style jsx>{`
-        @media (max-width: 768px) {
-          .desktop-menu {
-            display: none;
-          }
-          .hamburger {
-            display: block;
-          }
-        }
-      `}</style>
     </nav>
   );
 }
