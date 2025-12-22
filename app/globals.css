@@ -95,7 +95,7 @@ p {
 }
 
 /* Mobile specific */
-@media (max-width: 640px) {
+@media (max-width: 540px) {
   .nav-menu {
     width: 100%;
     justify-content: flex-start;
