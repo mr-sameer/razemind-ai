@@ -6,10 +6,13 @@ import { usePathname } from "next/navigation";
 
 export default function Navbar() {
   const pathname = usePathname();
+
   const [open, setOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
-  // ✅ Detect screen width safely
+  // 🔹 MOCK CREDITS (later DB / auth se aayega)
+  const [credits, setCredits] = useState(5);
+
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth <= 768);
     check();
@@ -24,12 +27,7 @@ export default function Navbar() {
   });
 
   return (
-    <nav
-      style={{
-        borderBottom: "1px solid #e5e7eb",
-        background: "#ffffff",
-      }}
-    >
+    <nav style={{ borderBottom: "1px solid #e5e7eb", background: "#ffffff" }}>
       <div
         style={{
           maxWidth: "1100px",
@@ -56,27 +54,44 @@ export default function Navbar() {
 
         {/* DESKTOP MENU */}
         {!isMobile && (
-          <div style={{ display: "flex", gap: "28px", alignItems: "center" }}>
+          <div style={{ display: "flex", gap: "24px", alignItems: "center" }}>
             <Link href="/tools" style={linkStyle("/tools")}>
               Tools
             </Link>
             <Link href="/pricing" style={linkStyle("/pricing")}>
               Pricing
             </Link>
-            <Link
-              href="/login"
+
+            {/* CREDITS BADGE */}
+            <div
               style={{
-                padding: "10px 18px",
-                background: "#4f46e5",
-                color: "#ffffff",
-                borderRadius: "8px",
-                fontWeight: 700,
+                padding: "6px 10px",
+                borderRadius: "999px",
                 fontSize: "13px",
-                textDecoration: "none",
+                fontWeight: 700,
+                background: credits > 0 ? "#eef2ff" : "#fee2e2",
+                color: credits > 0 ? "#3730a3" : "#991b1b",
               }}
             >
-              Get Started
-            </Link>
+              Credits: {credits}
+            </div>
+
+            {credits === 0 && (
+              <Link
+                href="/pricing"
+                style={{
+                  padding: "8px 14px",
+                  background: "#4f46e5",
+                  color: "#ffffff",
+                  borderRadius: "8px",
+                  fontWeight: 700,
+                  fontSize: "13px",
+                  textDecoration: "none",
+                }}
+              >
+                Upgrade
+              </Link>
+            )}
           </div>
         )}
 
@@ -113,21 +128,38 @@ export default function Navbar() {
           <Link href="/pricing" onClick={() => setOpen(false)}>
             Pricing
           </Link>
-          <Link
-            href="/login"
-            onClick={() => setOpen(false)}
+
+          {/* MOBILE CREDITS */}
+          <div
             style={{
-              padding: "10px",
-              background: "#4f46e5",
-              color: "#fff",
+              padding: "8px",
               borderRadius: "8px",
-              textAlign: "center",
               fontWeight: 700,
-              textDecoration: "none",
+              background: credits > 0 ? "#eef2ff" : "#fee2e2",
+              color: credits > 0 ? "#3730a3" : "#991b1b",
+              textAlign: "center",
             }}
           >
-            Get Started
-          </Link>
+            Credits: {credits}
+          </div>
+
+          {credits === 0 && (
+            <Link
+              href="/pricing"
+              onClick={() => setOpen(false)}
+              style={{
+                padding: "10px",
+                background: "#4f46e5",
+                color: "#fff",
+                borderRadius: "8px",
+                textAlign: "center",
+                fontWeight: 700,
+                textDecoration: "none",
+              }}
+            >
+              Upgrade
+            </Link>
+          )}
         </div>
       )}
     </nav>
