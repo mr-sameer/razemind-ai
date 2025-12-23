@@ -1,25 +1,27 @@
 "use client";
 
 import { useState } from "react";
-import { getUser } from "@/lib/auth";
+import { saveUser } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 
-export default function Login() {
+export default function Signup() {
   const router = useRouter();
   const [email, setEmail] = useState("");
 
-  const handleLogin = () => {
-    const user = getUser();
-    if (user && user.email === email) {
-      router.push("/tools");
-    } else {
-      alert("User not found. Please sign up.");
-    }
+  const handleSignup = () => {
+    if (!email) return;
+
+    saveUser({
+      email,
+      credits: 5, // 🎁 free credits
+    });
+
+    router.push("/tools");
   };
 
   return (
     <main style={{ maxWidth: "420px", margin: "80px auto", padding: "16px" }}>
-      <h1>Welcome back</h1>
+      <h1>Create your account</h1>
 
       <input
         type="email"
@@ -36,7 +38,7 @@ export default function Login() {
       />
 
       <button
-        onClick={handleLogin}
+        onClick={handleSignup}
         style={{
           marginTop: "20px",
           width: "100%",
@@ -48,7 +50,7 @@ export default function Login() {
           fontWeight: 700,
         }}
       >
-        Login
+        Sign up & get free credits
       </button>
     </main>
   );

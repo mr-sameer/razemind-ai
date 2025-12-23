@@ -3,20 +3,27 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { getUser, logoutUser } from "@/lib/auth";
 
 export default function Navbar() {
   const pathname = usePathname();
 
   const [open, setOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-
-  // 🔹 MOCK CREDITS (later DB / auth se aayega)
-  const [credits, setCredits] = useState(5);
+  const [credits, setCredits] = useState<number | null>(null);
 
   useEffect(() => {
+    // Mobile check
     const check = () => setIsMobile(window.innerWidth <= 768);
     check();
     window.addEventListener("resize", check);
+
+    // ✅ LOAD USER CREDITS
+    const user = getUser();
+    if (user) {
+      setCredits(user.credits);
+    }
+
     return () => window.removeEventListener("resize", check);
   }, []);
 
@@ -62,20 +69,41 @@ export default function Navbar() {
               Pricing
             </Link>
 
-            {/* CREDITS BADGE */}
-            <div
-              style={{
-                padding: "6px 10px",
-                borderRadius: "999px",
-                fontSize: "13px",
-                fontWeight: 700,
-                background: credits > 0 ? "#eef2ff" : "#fee2e2",
-                color: credits > 0 ? "#3730a3" : "#991b1b",
-              }}
-            >
-              Credits: {credits}
-            </div>
+            {/* SHOW CTA ONLY IF NOT LOGGED IN */}
+            {credits === null && (
+              <Link
+                href="/signup"
+                style={{
+                  padding: "8px 14px",
+                  background: "#4f46e5",
+                  color: "#ffffff",
+                  borderRadius: "8px",
+                  fontWeight: 700,
+                  fontSize: "13px",
+                  textDecoration: "none",
+                }}
+              >
+                Get Started
+              </Link>
+            )}
 
+            {/* ✅ CREDITS BADGE (SAFE) */}
+            {credits !== null && (
+              <div
+                style={{
+                  padding: "6px 10px",
+                  borderRadius: "999px",
+                  fontSize: "13px",
+                  fontWeight: 700,
+                  background: credits > 0 ? "#eef2ff" : "#fee2e2",
+                  color: credits > 0 ? "#3730a3" : "#991b1b",
+                }}
+              >
+                Credits: {credits}
+              </div>
+            )}
+
+            {/* UPGRADE IF ZERO */}
             {credits === 0 && (
               <Link
                 href="/pricing"
@@ -91,6 +119,25 @@ export default function Navbar() {
               >
                 Upgrade
               </Link>
+            )}
+
+            {/* LOGOUT */}
+            {credits !== null && (
+              <button
+                onClick={() => {
+                  logoutUser();
+                  location.reload();
+                }}
+                style={{
+                  background: "none",
+                  border: "none",
+                  color: "#64748b",
+                  fontWeight: 700,
+                  cursor: "pointer",
+                }}
+              >
+                Logout
+              </button>
             )}
           </div>
         )}
@@ -129,19 +176,38 @@ export default function Navbar() {
             Pricing
           </Link>
 
-          {/* MOBILE CREDITS */}
-          <div
-            style={{
-              padding: "8px",
-              borderRadius: "8px",
-              fontWeight: 700,
-              background: credits > 0 ? "#eef2ff" : "#fee2e2",
-              color: credits > 0 ? "#3730a3" : "#991b1b",
-              textAlign: "center",
-            }}
-          >
-            Credits: {credits}
-          </div>
+          {credits === null && (
+            <Link
+              href="/signup"
+              onClick={() => setOpen(false)}
+              style={{
+                padding: "10px",
+                background: "#4f46e5",
+                color: "#fff",
+                borderRadius: "8px",
+                textAlign: "center",
+                fontWeight: 700,
+                textDecoration: "none",
+              }}
+            >
+              Get Started
+            </Link>
+          )}
+
+          {credits !== null && (
+            <div
+              style={{
+                padding: "8px",
+                borderRadius: "8px",
+                fontWeight: 700,
+                background: credits > 0 ? "#eef2ff" : "#fee2e2",
+                color: credits > 0 ? "#3730a3" : "#991b1b",
+                textAlign: "center",
+              }}
+            >
+              Credits: {credits}
+            </div>
+          )}
 
           {credits === 0 && (
             <Link
