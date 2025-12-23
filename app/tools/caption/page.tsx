@@ -3,59 +3,48 @@
 import { useState } from "react";
 
 export default function CaptionTool() {
-  const [input, setInput] = useState("");
-  const [output, setOutput] = useState("");
-  const [credits, setCredits] = useState(10);
-  const [plan] = useState<"free" | "pro">("free");
+  const [caption, setCaption] = useState("");
 
-  const handleGenerate = async () => {
-    if (!input.trim()) return;
-
-    if (plan === "free" && credits <= 0) {
-      setOutput("❌ Free credits over. Upgrade to continue.");
-      return;
-    }
-
-    setOutput("Thinking...");
-
-    const res = await fetch("/api/generate", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        prompt: `Write 5 engaging social media captions for: ${input}`,
-      }),
-    });
-
-    const data = await res.json();
-
-    if (plan === "free") setCredits((c) => c - 1);
-    setOutput(data.result);
+  const saveCaption = () => {
+    if (!caption.trim()) return;
+    localStorage.setItem("workflow_caption", caption);
+    alert("✅ Caption saved to workflow");
   };
 
   return (
-    <main style={{ maxWidth: "800px", margin: "0 auto", padding: "80px 24px" }}>
-      <h1 style={{ fontSize: "32px", fontWeight: 800 }}>Caption Generator</h1>
+    <main
+      style={{
+        maxWidth: "800px",
+        margin: "0 auto",
+        padding: "72px 20px",
+      }}
+    >
+      <h1 style={{ fontSize: "32px", fontWeight: 800 }}>
+        Caption Editor
+      </h1>
 
-      <div style={{ marginTop: "12px", fontWeight: 600 }}>
-        Credits left: {credits}
-      </div>
+      <p style={{ marginTop: "8px", maxWidth: "600px" }}>
+        Write or edit your caption. This will be used in your posting workflow.
+      </p>
 
       <textarea
-        placeholder="Example: Fitness reel for beginners"
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
+        placeholder="Write your caption here..."
+        value={caption}
+        onChange={(e) => setCaption(e.target.value)}
         style={{
           width: "100%",
-          height: "140px",
+          height: "200px",
           marginTop: "24px",
           padding: "16px",
           borderRadius: "12px",
           border: "1px solid #e5e7eb",
+          fontSize: "15px",
+          resize: "vertical",
         }}
       />
 
       <button
-        onClick={handleGenerate}
+        onClick={saveCaption}
         style={{
           marginTop: "20px",
           padding: "12px 22px",
@@ -64,24 +53,11 @@ export default function CaptionTool() {
           borderRadius: "10px",
           border: "none",
           fontWeight: 700,
+          cursor: "pointer",
         }}
       >
-        Generate Captions
+        Save to Workflow
       </button>
-
-      {output && (
-        <div
-          style={{
-            marginTop: "32px",
-            padding: "20px",
-            background: "#f8fafc",
-            borderRadius: "12px",
-            whiteSpace: "pre-line",
-          }}
-        >
-          {output}
-        </div>
-      )}
     </main>
   );
 }

@@ -2,23 +2,69 @@
 
 import { useState } from "react";
 
+type HookItem = {
+  type: string;
+  text: string;
+  opening: string;
+  hint: string;
+};
+
 export default function HookTool() {
   const [platform, setPlatform] = useState("Instagram Reels");
   const [niche, setNiche] = useState("Gaming");
   const [audience, setAudience] = useState("Indian (Hinglish)");
   const [goal, setGoal] = useState("More Views");
   const [style, setStyle] = useState("Curiosity");
-  const [output, setOutput] = useState<string[]>([]);
+  const saveToWorkflow = (hook: {
+    type: string;
+    opening: string;
+    text: string;
+    hint: string;
+  }) => {
+    localStorage.setItem("workflow_hook", JSON.stringify(hook));
+    alert("✅ Hook added to workflow");
+  };
+
+  const [output, setOutput] = useState<HookItem[]>([]);
+
+  const copyHook = (text: string) => {
+    navigator.clipboard.writeText(text);
+  };
 
   const generateHooks = () => {
-    // 🇮🇳 Hinglish + Indian psychology tuned hooks
     setOutput([
-      "Bhai sach bolu to 90% log yahin galti karte hain",
-      "Agar tum beginner ho, ye video skip mat karna",
-      "Koi nahi batata ye trick, isliye views nahi aate",
-      "99% creators ko ye cheez samajh hi nahi aati",
-      "Maine ye galti 1 saal ki, tum mat karna",
-      "Stop scrolling ❌ agar tum growth chahte ho",
+      {
+        type: "MISTAKE",
+        opening:
+          "Bhai sach bolu to 90% creators ek hi galti repeat kar rahe hain",
+        text: "90% creators yahin galti karte hain",
+        hint: "Beginner audience ke liye best — awareness create karta hai",
+      },
+      {
+        type: "CURIOUS",
+        opening: "Ek aisi trick hai jo koi openly nahi batata",
+        text: "Koi nahi batata ye trick, isliye views nahi aate",
+        hint: "Scroll stop ke liye — jab retention low ho",
+      },
+      {
+        type: "FEAR",
+        opening:
+          "Agar tum beginner ho, ye baat miss ki to growth ruk jaayegi",
+        text: "Agar tum beginner ho, ye skip kiya to growth ruk jaayegi",
+        hint: "Urgency create karne ke liye — CTA strong banta hai",
+      },
+      {
+        type: "RESULT",
+        opening: "Is ek cheez ne meri reach literally 3x kar di",
+        text: "Is ek cheez ne meri reach 3x kar di",
+        hint: "Proof-based hooks — authority build karte hain",
+      },
+      {
+        type: "DIRECT",
+        opening: "Stop scrolling, agar tum sach me grow karna chahte ho",
+        text: "Stop scrolling ❌ agar tum growth chahte ho",
+        hint: "Aggressive hooks — high-competition niches ke liye",
+      },
     ]);
   };
 
@@ -127,16 +173,16 @@ export default function HookTool() {
       >
         <strong style={{ fontSize: "15px" }}>Hook Style</strong>
 
-        <div style={{ display: "flex", gap: "20px", marginTop: "12px" }}>
+        <div className="pill-group">
           {["Curiosity", "Aggressive", "Emotional"].map((s) => (
-            <label key={s} style={{ fontWeight: 600 }}>
-              <input
-                type="radio"
-                checked={style === s}
-                onChange={() => setStyle(s)}
-              />{" "}
+            <button
+              key={s}
+              type="button"
+              className={`pill ${style === s ? "active" : ""}`}
+              onClick={() => setStyle(s)}
+            >
               {s}
-            </label>
+            </button>
           ))}
         </div>
       </div>
@@ -173,19 +219,71 @@ export default function HookTool() {
         >
           <strong>Hooks ready to post 👇</strong>
 
-          <ul style={{ marginTop: "16px" }}>
+          <div className="hook-grid">
             {output.map((hook, i) => (
-              <li
-                key={i}
-                style={{
-                  marginBottom: "10px",
-                  fontWeight: 600,
-                }}
-              >
-                {hook}
-              </li>
+              <div key={i} className="hook-card">
+                <button
+                  className="copy-btn"
+                  onClick={() => copyHook(hook.text)}
+                >
+                  Copy
+                </button>
+                <button
+                  onClick={() => saveToWorkflow(hook)}
+                  style={{
+                    marginTop: "10px",
+                    width: "100%",
+                    padding: "8px",
+                    borderRadius: "10px",
+                    border: "1px solid #e5e7eb",
+                    background: "#ffffff",
+                    fontWeight: 700,
+                    cursor: "pointer",
+                  }}
+                >
+                  ➕ Use in Workflow
+                </button>
+                {/* TYPE */}
+                <div
+                  style={{
+                    fontSize: "12px",
+                    fontWeight: 700,
+                    color: "#4f46e5",
+                    marginBottom: "6px",
+                  }}
+                >
+                  [{hook.type}]
+                </div>
+
+                {/* 🎙️ OPENING LINE */}
+                <div
+                  style={{
+                    fontSize: "14px",
+                    fontWeight: 700,
+                    marginBottom: "6px",
+                  }}
+                >
+                  🎙️ {hook.opening}
+                </div>
+
+                {/* HOOK TEXT */}
+                <div style={{ marginTop: "4px" }}>
+                  ✍️ <strong>Caption:</strong> {hook.text}
+                </div>
+
+                {/* HINT */}
+                <div
+                  style={{
+                    marginTop: "6px",
+                    fontSize: "13px",
+                    color: "#64748b",
+                  }}
+                >
+                  💡 {hook.hint}
+                </div>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
       )}
     </main>

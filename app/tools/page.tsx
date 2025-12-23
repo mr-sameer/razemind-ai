@@ -1,14 +1,49 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export default function ToolsHome() {
+  const [mounted, setMounted] = useState(false);
+  const [hasHook, setHasHook] = useState(false);
+  const [hasCaption, setHasCaption] = useState(false);
+  const [hasHashtags, setHasHashtags] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+
+    setHasHook(!!localStorage.getItem("workflow_hook"));
+    setHasCaption(!!localStorage.getItem("workflow_caption"));
+    setHasHashtags(!!localStorage.getItem("workflow_hashtags"));
+  }, []);
+
+  // ⛔ Prevent hydration mismatch
+  if (!mounted) return null;
+
   const cards = [
+    {
+      title: "Creator Workflow",
+      desc: "Hook → Caption → Hashtags. Everything ready to post in one flow.",
+      href: "/tools/workflow",
+      emoji: "🚀",
+      highlight: true,
+      progress: [
+        { label: "Hook", done: hasHook },
+        { label: "Caption", done: hasCaption },
+        { label: "Hashtags", done: hasHashtags },
+      ],
+    },
     {
       title: "Content Ideas",
       desc: "Get viral content ideas tailored to your niche.",
       href: "/tools/ideas",
       emoji: "💡",
+    },
+    {
+      title: "Hook Generator",
+      desc: "Create scroll-stopping hooks for short videos.",
+      href: "/tools/hook",
+      emoji: "🎯",
     },
     {
       title: "Caption Generator",
@@ -22,12 +57,6 @@ export default function ToolsHome() {
       href: "/tools/hashtag",
       emoji: "#️⃣",
     },
-    {
-      title: "Hook Generator",
-      desc: "Create scroll-stopping hooks for short videos.",
-      href: "/tools/hook",
-      emoji: "🎯",
-    },
   ];
 
   return (
@@ -38,7 +67,6 @@ export default function ToolsHome() {
         padding: "80px 24px",
       }}
     >
-      {/* Header */}
       <h1 style={{ fontSize: "36px", fontWeight: 800 }}>
         Razemind Tools
       </h1>
@@ -46,7 +74,6 @@ export default function ToolsHome() {
         Choose a tool to grow faster on social media.
       </p>
 
-      {/* Cards Grid */}
       <div
         style={{
           marginTop: "40px",
@@ -56,40 +83,36 @@ export default function ToolsHome() {
         }}
       >
         {cards.map((c) => (
-          <Link
-            key={c.title}
-            href={c.href}
-            style={{ textDecoration: "none" }}
-          >
+          <Link key={c.title} href={c.href} style={{ textDecoration: "none" }}>
             <div
               style={{
-                border: "1px solid #e5e7eb",
+                border: c.highlight
+                  ? "2px solid #4f46e5"
+                  : "1px solid #e5e7eb",
                 borderRadius: "16px",
                 padding: "24px",
                 background: "#ffffff",
-                transition: "all 0.2s ease",
-                cursor: "pointer",
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLDivElement).style.transform =
-                  "translateY(-4px)";
-                (e.currentTarget as HTMLDivElement).style.boxShadow =
-                  "0 10px 24px rgba(0,0,0,0.08)";
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLDivElement).style.transform =
-                  "translateY(0)";
-                (e.currentTarget as HTMLDivElement).style.boxShadow =
-                  "none";
               }}
             >
               <div style={{ fontSize: "28px" }}>{c.emoji}</div>
-              <h3 style={{ marginTop: "12px", fontSize: "20px", fontWeight: 700 }}>
+
+              <h3 style={{ marginTop: "12px", fontSize: "20px", fontWeight: 800 }}>
                 {c.title}
               </h3>
+
               <p style={{ marginTop: "8px", color: "#475569" }}>
                 {c.desc}
               </p>
+
+              {c.progress && (
+                <div style={{ marginTop: "12px", fontSize: "13px" }}>
+                  {c.progress.map((p) => (
+                    <div key={p.label}>
+                      {p.done ? "✅" : "⬜"} {p.label}
+                    </div>
+                  ))}
+                </div>
+              )}
 
               <div
                 style={{
