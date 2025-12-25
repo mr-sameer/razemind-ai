@@ -18,90 +18,90 @@ export default function HashtagTool() {
   >("Instagram Reels");
 
   const handleGenerate = async () => {
-  if (!input.trim()) return;
+    if (!input.trim()) return;
 
-  if (plan === "free" && credits <= 0) {
-    setOutput([
-      {
-        type: "INFO",
-        tags: [],
-        hint: "❌ Free credits over. Upgrade to continue.",
-      },
-    ]);
-    return;
-  }
+    if (plan === "free" && credits <= 0) {
+      setOutput([
+        {
+          type: "INFO",
+          tags: [],
+          hint: "❌ Free credits over. Upgrade to continue.",
+        },
+      ]);
+      return;
+    }
 
-  let hashtags: HashtagGroup[] = [];
+    let hashtags: HashtagGroup[] = [];
 
-  if (platform === "Instagram Reels") {
-    hashtags = [
-      {
-        type: "REACH",
-        tags: ["#reels", "#viralreels", "#explorepage", "#trendingreels"],
-        hint: "Instagram ke naye audience tak pahunchne ke liye",
-      },
-      {
-        type: "NICHE",
-        tags: ["#gamingindia", "#freefire", "#mobilegaming"],
-        hint: "Instagram algorithm ko niche samjhane ke liye",
-      },
-      {
-        type: "CONVERT",
-        tags: ["#followformore", "#dailycontent"],
-        hint: "Profile visits aur followers badhane ke liye",
-      },
-    ];
-  }
+    if (platform === "Instagram Reels") {
+      hashtags = [
+        {
+          type: "REACH",
+          tags: ["#reels", "#viralreels", "#explorepage", "#trendingreels"],
+          hint: "Instagram ke naye audience tak pahunchne ke liye",
+        },
+        {
+          type: "NICHE",
+          tags: ["#gamingindia", "#freefire", "#mobilegaming"],
+          hint: "Instagram algorithm ko niche samjhane ke liye",
+        },
+        {
+          type: "CONVERT",
+          tags: ["#followformore", "#dailycontent"],
+          hint: "Profile visits aur followers badhane ke liye",
+        },
+      ];
+    }
 
-  if (platform === "YouTube Shorts") {
-    hashtags = [
-      {
-        type: "REACH",
-        tags: ["#shorts", "#ytshorts", "#viralshorts"],
-        hint: "YouTube Shorts feed me reach ke liye",
-      },
-      {
-        type: "NICHE",
-        tags: ["#freefire", "#gaming", "#shortsgaming"],
-        hint: "YouTube ko video topic samjhane ke liye",
-      },
-      {
-        type: "CONVERT",
-        tags: ["#subscribe", "#dailyshorts"],
-        hint: "Subscribers grow karne ke liye",
-      },
-    ];
-  }
+    if (platform === "YouTube Shorts") {
+      hashtags = [
+        {
+          type: "REACH",
+          tags: ["#shorts", "#ytshorts", "#viralshorts"],
+          hint: "YouTube Shorts feed me reach ke liye",
+        },
+        {
+          type: "NICHE",
+          tags: ["#freefire", "#gaming", "#shortsgaming"],
+          hint: "YouTube ko video topic samjhane ke liye",
+        },
+        {
+          type: "CONVERT",
+          tags: ["#subscribe", "#dailyshorts"],
+          hint: "Subscribers grow karne ke liye",
+        },
+      ];
+    }
 
-  if (platform === "YouTube Long") {
-    hashtags = [
-      {
-        type: "REACH",
-        tags: ["#youtube", "#newvideo"],
-        hint: "Initial discovery ke liye",
-      },
-      {
-        type: "NICHE",
-        tags: ["#freefiregameplay", "#gamingvideo"],
-        hint: "Search + recommendation ke liye",
-      },
-      {
-        type: "CONVERT",
-        tags: ["#subscribe", "#watchtillend"],
-        hint: "Watch time aur subscribers ke liye",
-      },
-    ];
-  }
+    if (platform === "YouTube Long") {
+      hashtags = [
+        {
+          type: "REACH",
+          tags: ["#youtube", "#newvideo"],
+          hint: "Initial discovery ke liye",
+        },
+        {
+          type: "NICHE",
+          tags: ["#freefiregameplay", "#gamingvideo"],
+          hint: "Search + recommendation ke liye",
+        },
+        {
+          type: "CONVERT",
+          tags: ["#subscribe", "#watchtillend"],
+          hint: "Watch time aur subscribers ke liye",
+        },
+      ];
+    }
 
-  // ✅ UI OUTPUT
-  setOutput(hashtags);
+    // ✅ UI OUTPUT
+    setOutput(hashtags);
 
-  // ✅ SAVE TO WORKFLOW (CORRECT PLACE)
-  const allTags = hashtags.flatMap((g) => g.tags).join(" ");
-  localStorage.setItem("workflow_hashtags", allTags);
+    // ✅ SAVE TO WORKFLOW (CORRECT PLACE)
+    const allTags = hashtags.flatMap((g) => g.tags).join(" ");
+    localStorage.setItem("workflow_hashtags", allTags);
 
-  if (plan === "free") setCredits((c) => c - 1);
-};
+    if (plan === "free") setCredits((c) => c - 1);
+  };
   // ✅ SAVE TO WORKFLOW
 
   return (

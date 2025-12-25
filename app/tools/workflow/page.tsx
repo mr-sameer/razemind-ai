@@ -13,6 +13,22 @@ export default function WorkflowPage() {
   const [hook, setHook] = useState<HookData | null>(null);
   const [caption, setCaption] = useState<string | null>(null);
   const [hashtags, setHashtags] = useState<string | null>(null);
+  const fullPost =
+    hook && caption && hashtags
+      ? `🎙️ ${hook.opening}
+
+${hook.text}
+
+${caption}
+
+${hashtags}`
+      : "";
+  const copyFullPost = () => {
+    if (!fullPost) return;
+    navigator.clipboard.writeText(fullPost);
+    alert("✅ Full post copied! Ready to paste 🚀");
+  };
+
 
   useEffect(() => {
     const savedHook = localStorage.getItem("workflow_hook");
@@ -86,7 +102,26 @@ export default function WorkflowPage() {
         )}
       </div>
 
-      {/* 🧠 POSTING GUIDE — ✅ NOW IT WILL SHOW */}
+      {/* 📋 COPY FULL POST */}
+      {hook && caption && hashtags && (
+        <button
+          onClick={copyFullPost}
+          style={{
+            marginTop: "24px",
+            width: "100%",
+            padding: "16px",
+            background: "#4f46e5",
+            color: "#fff",
+            borderRadius: "14px",
+            border: "none",
+            fontWeight: 800,
+            fontSize: "15px",
+            cursor: "pointer",
+          }}
+        >
+          📋 Copy Full Post
+        </button>
+      )}
       <div
         style={{
           marginTop: "40px",
