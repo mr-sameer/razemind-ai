@@ -10,6 +10,7 @@ type HookData = {
 };
 type WorkflowItem = {
   id: string;
+  title: string; // 👈 NEW
   platform: "Instagram" | "YouTube";
   hook: HookData;
   caption: string;
@@ -24,6 +25,10 @@ export default function WorkflowPage() {
   const [hashtags, setHashtags] = useState<string | null>(null);
   const [platform, setPlatform] = useState<"Instagram" | "YouTube">("Instagram");
   const [history, setHistory] = useState<WorkflowItem[]>([]);
+  const [historyFilter, setHistoryFilter] = useState<
+    "ALL" | "Instagram" | "YouTube"
+  >("ALL");
+  const [workflowTitle, setWorkflowTitle] = useState("");
 
   const platformHints = {
     Instagram: {
@@ -46,9 +51,14 @@ export default function WorkflowPage() {
     if (h) setHook(JSON.parse(h));
     if (c) setCaption(c);
     if (t) setHashtags(t);
-    
+
   }, []);
 
+  /* ---------- LOAD HISTORY ---------- */
+  useEffect(() => {
+    const saved = localStorage.getItem("workflow_history");
+    if (saved) setHistory(JSON.parse(saved));
+  }, []);
 
   /* 🔥 PLATFORM-WISE SMART FORMAT */
   const formattedPost =
@@ -80,6 +90,7 @@ ${hashtags}`
 
     const newItem: WorkflowItem = {
       id: Date.now().toString(),
+      title: workflowTitle || "Untitled Workflow",
       platform,
       hook,
       caption,
@@ -103,7 +114,10 @@ ${hashtags}`
       : hook?.type === "CURIOUS"
         ? "👉 Subscribe to know the full truth"
         : "👉 Subscribe for more videos like this";
-
+  const filteredHistory =
+    historyFilter === "ALL"
+      ? history
+      : history.filter((item) => item.platform === historyFilter);
   return (
     <main style={{ maxWidth: 900, margin: "0 auto", padding: "72px 20px" }}>
       <h1 style={{ fontSize: 32, fontWeight: 800 }}>Creator Workflow</h1>
@@ -125,7 +139,6 @@ ${hashtags}`
           <option>YouTube</option>
         </select>
       </div>
-
       {/* HOOK */}
       <Section title="🎯 Hook">
         {!hook && <Muted>No hook selected yet.</Muted>}
@@ -193,7 +206,26 @@ ${hashtags}`
           </Box>
         </Section>
       )}
+      {hook && caption && hashtags && (
+        <div style={{ marginTop: 32 }}>
+          <label className="field-label">
+            Workflow Title (optional)
+          </label>
 
+          <input
+            value={workflowTitle}
+            onChange={(e) => setWorkflowTitle(e.target.value)}
+            placeholder="e.g. FreeFire Reel – High Views"
+            style={{
+              width: "100%",
+              padding: "12px",
+              borderRadius: "10px",
+              border: "1px solid #e5e7eb",
+              marginTop: "6px",
+            }}
+          />
+        </div>
+      )}
       {/* COPY */}
       {formattedPost && (
         <button style={copyBtn} onClick={copyPost}>
@@ -211,6 +243,154 @@ ${hashtags}`
             <li>#️⃣ Hashtags always at the end</li>
             <li>⏰ Post at peak audience time</li>
           </ul>
+        </div>
+      )}
+      {/* ---------------- HISTORY ---------------- */}
+      {history.length > 0 && (
+        <div style={{ marginTop: 56 }}>
+          <h3 style={{ fontWeight: 800, fontSize: 20 }}>
+            🕘 Recent Workflows
+          </h3>
+          <p style={{ marginTop: 4, fontSize: 14, color: "#64748b" }}>
+            Reuse your previous successful content
+          </p>
+          {/* FILTER BUTTONS */}
+          <div style={{ marginTop: 12, display: "flex", gap: 10 }}>
+            {["ALL", "Instagram", "YouTube"].map((p) => (
+              <button
+                key={p}
+                onClick={() =>
+                  setHistoryFilter(p as "ALL" | "Instagram" | "YouTube")
+                }
+                style={{
+                  padding: "6px 12px",
+                  borderRadius: 8,
+                  border: "1px solid #e5e7eb",
+                  background:
+                    historyFilter === p ? "#4f46e5" : "#ffffff",
+                  color: historyFilter === p ? "#fff" : "#334155",
+                  fontWeight: 700,
+                  cursor: "pointer",
+                }}
+              >
+                {p}
+              </button>
+            ))}
+          </div>
+          <div
+            style={{
+              marginTop: 20,
+              display: "grid",
+              gap: 16,
+            }}
+          >
+            {filteredHistory.map((item) => (
+              <div
+                key={item.id}
+                style={{
+                  border: "1px solid #e5e7eb",
+                  borderRadius: 16,
+                  padding: 20,
+                  background: "#ffffff",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 12,
+                }}
+              >
+                {/* META */}
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    fontSize: 13,
+                    color: "#64748b",
+                  }}
+                >
+                  <span>
+                    {item.platform} •{" "}
+                    {new Date(item.createdAt).toLocaleDateString()}
+                  </span>
+
+                  <span
+                    style={{
+                      padding: "4px 10px",
+                      borderRadius: 999,
+                      background: "#eef2ff",
+                      color: "#4f46e5",
+                      fontWeight: 700,
+                      fontSize: 12,
+                    }}
+                  >
+                    Saved
+                  </span>
+                </div>
+
+                {/* CONTENT */}
+                <div style={{ fontWeight: 800, fontSize: 16 }}>
+                  📌 {item.title}
+                </div>
+
+                <div style={{ marginTop: 4, color: "#64748b", fontSize: 14 }}>
+                  🎙️ {item.hook.opening}
+                </div>
+
+                {/* ACTIONS */}
+                <div
+                  style={{
+                    display: "flex",
+                    gap: 12,
+                    marginTop: 4,
+                  }}
+                >
+                  <button
+                    onClick={() => {
+                      setHook(item.hook);
+                      setCaption(item.caption);
+                      setHashtags(item.hashtags);
+                      setPlatform(item.platform);
+                      setWorkflowTitle(item.title);
+                    }}
+                    style={{
+                      padding: "10px 16px",
+                      background: "#4f46e5",
+                      color: "#ffffff",
+                      borderRadius: 10,
+                      border: "none",
+                      fontWeight: 700,
+                      cursor: "pointer",
+                    }}
+                  >
+                    🔁 Reuse
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      const filtered = history.filter(
+                        (h) => h.id !== item.id
+                      );
+                      setHistory(filtered);
+                      localStorage.setItem(
+                        "workflow_history",
+                        JSON.stringify(filtered)
+                      );
+                    }}
+                    style={{
+                      padding: "10px 16px",
+                      background: "#f1f5f9",
+                      color: "#0f172a",
+                      borderRadius: 10,
+                      border: "1px solid #e5e7eb",
+                      fontWeight: 700,
+                      cursor: "pointer",
+                    }}
+                  >
+                    🗑 Delete
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </main>
@@ -276,57 +456,3 @@ const guideBox = {
   borderRadius: 16,
   padding: 24,
 };
-{history.length > 0 && (
-  <div style={{ marginTop: 48 }}>
-    <h3 style={{ fontWeight: 800 }}>🕘 Recent Workflows</h3>
-
-    {history.map((item) => (
-      <div
-        key={item.id}
-        style={{
-          marginTop: 16,
-          border: "1px solid #e5e7eb",
-          borderRadius: 12,
-          padding: 16,
-          background: "#fff",
-        }}
-      >
-        <div style={{ fontSize: 13, color: "#64748b" }}>
-          {item.platform} • {new Date(item.createdAt).toLocaleString()}
-        </div>
-
-        <div style={{ marginTop: 8, fontWeight: 700 }}>
-          🎙️ {item.hook.opening}
-        </div>
-
-        <div style={{ marginTop: 12, display: "flex", gap: 12 }}>
-          {/* REUSE */}
-          <button
-            onClick={() => {
-              setHook(item.hook);
-              setCaption(item.caption);
-              setHashtags(item.hashtags);
-              setPlatform(item.platform);
-            }}
-          >
-            🔁 Reuse
-          </button>
-
-          {/* DELETE */}
-          <button
-            onClick={() => {
-              const filtered = history.filter((h) => h.id !== item.id);
-              setHistory(filtered);
-              localStorage.setItem(
-                "workflow_history",
-                JSON.stringify(filtered)
-              );
-            }}
-          >
-            🗑 Delete
-          </button>
-        </div>
-      </div>
-    ))}
-  </div>
-)}

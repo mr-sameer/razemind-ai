@@ -17,6 +17,8 @@
 
 html,
 body {
+  margin: 0;
+  padding: 0;
   height: 100%;
   background: var(--bg);
   color: var(--text-primary);
@@ -102,9 +104,16 @@ p {
     gap: 14px;
   }
 }
+@media (max-width: 640px) {
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+    text-align: center;
+  }
+}
 /* Container */
 .container {
-  max-width: 900px;
+  max-width: 1100px; /* ya 1200px */
   margin: 0 auto;
   padding: 0 16px;
 }
@@ -137,13 +146,6 @@ p {
   font-size: 13px;
   font-weight: 600;
   color: #475569; /* slate-600 */
-}
-.field-label {
-  display: block;
-  margin-bottom: 6px;
-  font-size: 13px;
-  font-weight: 600;
-  color: #475569;
 }
 
 /* Premium Pill Toggle */
@@ -209,4 +211,63 @@ p {
 
 .copy-btn:hover {
   background: #e2e8f0;
+}
+/* ================= FOOTER ================= */
+
+.footer {
+  margin-top: 120px;
+  background: #ffffff;
+  border-top: 1px solid var(--border);
+}
+
+.footer-grid {
+  padding: 48px 16px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 40px;
+}
+
+.footer-brand {
+  font-weight: 800;
+  font-size: 18px;
+}
+
+.footer-text {
+  margin-top: 8px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  max-width: 260px;
+}
+
+.footer-title {
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.footer-links {
+  list-style: none;
+  padding: 0;
+  font-size: 14px;
+}
+
+.footer-links li {
+  margin-bottom: 8px;
+}
+
+.footer-links a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.footer-links a:hover {
+  color: var(--accent);
+}
+
+.footer-bottom {
+  text-align: center;
+  font-size: 13px;
+  color: #64748b;
+  padding-bottom: 24px;
 }
